@@ -54,6 +54,8 @@ df['DRecovered'] = df['recuperados'] - df['recuperados'].shift(1)
 df['Dn_confirmados'] = df['n_confirmados'] - df['n_confirmados'].shift(1)
 #DTests is the daily tests
 df['DTests'] = df['DCases'] + df['Dn_confirmados']
+# R0, probably not well calculated
+df['R0'] = df['DCases'] / df['DCases'].shift(1)
 
 
 import plotly.graph_objects as go
@@ -90,6 +92,12 @@ fig.update_layout(title_text='Cases and deaths, Portugal', xaxis_rangeslider_vis
 # fig.show()
 fig.write_image('portugal_cases_deaths.png')
 
+fig = go.Figure( go.Scatter(x=df.data, y=df.R0, line_shape='spline', name='R0', line=dict(width =5)))
+fig.update_layout(title_text='R0, Portugal')
+# fig.show()
+fig.write_image('portugal_R0.png')
+
+
 fig = go.Figure( go.Scatter(x=df.data, y=df.DCases, line_shape='spline', name='cases', line=dict(width =5)))
 fig.add_scatter(x=df.data, y=df.DDeaths,line_shape='spline', name='deaths', line=dict(width =2))
 # fig.add_scatter(x=df.data, y=df.DRecovered, line_shape='spline', name='recovered', line=dict(width =2))
@@ -114,7 +122,7 @@ fig.write_image('portugal_cases_tests_nconf_daily.png')
 fig = go.Figure( go.Scatter(x=df.data, y=df.internados, line_shape='spline', name='Hospital', line=dict(width =2)))
 fig.add_scatter(x=df.data, y=df.internados_uci,line_shape='spline', name='UCI', line=dict(width =2))
 fig.add_scatter(x=df.data, y=df.obitos, line_shape='spline', name='deaths', line=dict(width =2))
-fig.add_trace(go.Bar(x=df.data, y=df.DDeaths, name='daily deaths'))
-fig.update_layout(title_text='Cases and deaths, Portugal', xaxis_rangeslider_visible=False)
+fig.add_trace(go.Bar(x=df.data, y=df.DDeaths*10, name='daily deaths x 10'))
+fig.update_layout(title_text='Hospital, UCI and daily deaths, Portugal', xaxis_rangeslider_visible=False)
 # fig.show()
 fig.write_image('portugal_hospital_uci_deaths_daily.png')
